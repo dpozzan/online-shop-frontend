@@ -1,0 +1,23 @@
+.input-group {
+    width: 30%;
+}
+
+.form-control:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid #FFD045;
+    padding-left: 12%;
+}
+.card-img-top {
+    height: 400px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}

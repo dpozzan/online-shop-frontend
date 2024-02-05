@@ -1,0 +1,38 @@
+<div class="container">
+    <ul class="list-group">
+        <li *ngFor="let item of basket; let i = index;" class="list-group-item d-flex justify-content-between flex-column">
+            <p class="d-flex justify-content-between align-items-center">
+                <span class="d-flex gap-3">
+                  <span>
+                      {{ item.name }}
+                  </span>
+                  <span class="text-warning fw-bold">{{ (item.price * item.quantity).toFixed(2) }} €</span>
+                </span>
+                <span class="big-badge badge text-bg-warning rounded-pill">{{ item.quantity }}</span>
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <img class="basket-item-image" [src]="staticPath + item.image_urls[0]" [alt]="item.name">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group" role="group" aria-label="Third group">
+                      <button type="button" class="small-btn btn btn-warning" (click)="removeUnits(item)">-</button>
+                      <button type="button" class="small-btn btn btn-warning" (click)="addUnits(item)">+</button>
+                    </div>
+                  </div>
+            </div>
+        </li>
+        <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
+          A second list item
+          <span class="badge bg-primary rounded-pill">2</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          A third list item
+          <span class="badge bg-primary rounded-pill">1</span>
+        </li> -->
+      </ul>
+      <div class="d-flex justify-content-center mt-3 gap-3">
+        <div *ngIf="basket.length > 0" class="card text-bg-warning" style="max-width: 18rem;">
+          <div class="card-header">Total price: {{ totalPrice }}€</div>
+        </div>
+        <button *ngIf="basket.length > 0" type="button" class="btn btn-outline-success">Checkout</button>
+      </div>
+</div>
