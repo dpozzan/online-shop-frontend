@@ -8,12 +8,14 @@ import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BasketResolver } from './resolvers/basket-resolver.service';
 import { CanDeactivateProductDetailGuard } from './product/product-detail/can-deactivate-product-detail-guard.service';
+import { AuthComponent } from './auth/auth/auth.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'products', component: ProductsComponent },
   { path: 'products/:id', component: ProductDetailComponent, canDeactivate: [CanDeactivateProductDetailGuard], resolve: { product: ProductResolver } },
   { path: 'basket', component: ShoppingCartComponent, resolve: { basket: BasketResolver } },
+  { path: 'auth', component: AuthComponent },
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', redirectTo: 'not-found' }
 ];

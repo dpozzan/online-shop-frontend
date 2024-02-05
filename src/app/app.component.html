@@ -27,8 +27,8 @@
             <i class="bi bi-person-dash"></i>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Login</a></li>
-            <li><a class="dropdown-item" href="#">Sign up</a></li>
+            <li><a class="dropdown-item" [routerLink]="['auth']" [queryParams]="{'mode': 'login'}">Login</a></li>
+            <li><a class="dropdown-item" [routerLink]="['auth']" [queryParams]="{'mode': 'signup'}">Sign up</a></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
         </div>
