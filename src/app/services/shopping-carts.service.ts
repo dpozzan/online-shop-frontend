@@ -18,16 +18,11 @@ export class ShoppingCartsService {
     return new Promise((resolve) => {
       let existingProduct = this.shoppingCart.find((cartItem) => cartItem.id === product.id)
       if(existingProduct){
-        console.log('product exists')
         let existingProductIndex = this.shoppingCart.findIndex((cartItem) => cartItem.id === product.id)
         let updatedProduct = {...existingProduct, quantity: existingProduct.quantity + product.quantity}
         this.shoppingCart[existingProductIndex] = updatedProduct;
       } else {
-        console.log('product not exist yet')
-        console.log('shoppingCart: ', this.shoppingCart)
-        console.log('product to add : ', product)
         this.shoppingCart = [...this.shoppingCart, product];
-        console.log('shoppingCart after update: ', this.shoppingCart)
       }
       this.shoppingCartSubjetc.next(this.shoppingCart);
       resolve();
@@ -48,6 +43,10 @@ export class ShoppingCartsService {
 
     this.shoppingCartSubjetc.next(this.shoppingCart)
     return this.shoppingCart
+  }
+
+  emptyTheBasket() {
+    this.shoppingCartSubjetc.next([])
   }
 
 }

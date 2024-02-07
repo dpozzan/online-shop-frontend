@@ -1,6 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 
 @Component({
@@ -8,20 +9,61 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
-export class AuthComponent implements OnInit {
-  isLoginMode: boolean = true
-  constructor(private route: ActivatedRoute) {}
+export class AuthComponent implements OnInit, OnDestroy {
+  error: string | undefined = null;
+  message: string | undefined = null;
+  isLoginMode: boolean = true;
+  messageTimeout: any;
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {}
 
 
   onSubmit(form: NgForm) {
-    console.log(form)
+    if(this.isLoginMode){
+      this.authService.login(form.value).subscribe({
+        next: () => {
+          this.error = null;
+          this.router.navigate(['/products']);
+        }, 
+        error: (error) => {
+          this.error = error;
+        }
+      })
+    } else {
+      this.authService.register(form.value).subscribe({
+        next: (response) => {
+          this.message = response.message;
+          this.error = null;
+          this.messageTimeout = setTimeout(() => {
+            this.message = null;
+          }, 1500)
+        },
+        error: (error) => {
+          this.error = error;
+        }
+      })
+    }
 
   }
 
   ngOnInit(): void {
-
-    this.route.queryParams.subscribe(loginMode => this.isLoginMode = loginMode['mode'] === 'login')
-   
+    this.route.queryParams.subscribe(queryParams => {
+      this.isLoginMode = queryParams['mode'] === 'login';
+      if(queryParams['message']) {
+        this.message = 'You must be logged in to proceed with the checkout.';
+      }
+    })
   }
+
+  toggleLoginMode(): void {
+    this.isLoginMode = !this.isLoginMode;
+    const queryParams = { mode: this.isLoginMode ? 'login' : 'signup'};
+    this.router.navigate([], {queryParams: queryParams, queryParamsHandling: 'merge'} )
+  } 
+
+  ngOnDestroy(): void {
+    clearTimeout(this.messageTimeout)
+  }
+
+ 
 
 }

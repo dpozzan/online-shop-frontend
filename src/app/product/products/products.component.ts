@@ -23,11 +23,6 @@ export class ProductsComponent implements OnInit{
       this.products = products
     })
 
-   
-
-    
-
-    // this.products = [...this.products, product1, product2, product3, product4]
   }
 
   decreaseQuantity(product: Product) {
@@ -47,7 +42,6 @@ export class ProductsComponent implements OnInit{
   
   async addToCart(product: Product) {
     const productToItem = {...product, quantity: this.quantity}
-    console.log('product before sending to service: ', productToItem)
     await this.shoppingCartsService.saveTemporaryItem(productToItem);  
     product.quantity = 1;
     this.quantity = 1;

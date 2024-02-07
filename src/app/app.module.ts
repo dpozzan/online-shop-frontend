@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -13,9 +13,8 @@ import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthComponent } from './auth/auth/auth.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { OrderDetailComponent } from './orders/order-detail/order-detail.component';
 
 
 
@@ -28,6 +27,7 @@ import { MatInputModule } from '@angular/material/input';
     ShoppingCartComponent,
     NotFoundComponent,
     AuthComponent,
+    OrderDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,7 +36,11 @@ import { MatInputModule } from '@angular/material/input';
     FormsModule,
     BrowserAnimationsModule,
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true  
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

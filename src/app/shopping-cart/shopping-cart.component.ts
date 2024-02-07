@@ -1,8 +1,10 @@
 import { Component, DoCheck, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../product/product.model';
 import { environment } from 'src/environments/environment';
 import { ShoppingCartsService } from '../services/shopping-carts.service';
+import { OrdersService } from '../services/orders.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -13,7 +15,12 @@ export class ShoppingCartComponent implements OnInit, DoCheck { // Fixed class i
   basket: Product[] = [];
   public totalPrice: number = 0;
   public staticPath = environment.staticPath;
-  constructor(private route: ActivatedRoute, private shoppingCartsService: ShoppingCartsService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private shoppingCartsService: ShoppingCartsService, 
+    private ordersService: OrdersService, 
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.route.data.subscribe((data) => {
@@ -47,5 +54,17 @@ export class ShoppingCartComponent implements OnInit, DoCheck { // Fixed class i
     this.shoppingCartsService.updateTemporaryItem(updatedProduct);
   }
 
+  checkout() {
+    this.ordersService.createOrder(this.basket).pipe(take(1)).subscribe({
+      next: (order) => {
+        this.shoppingCartsService.emptyTheBasket()
+        this.router.navigate(['/orders', order.id])
+      },
+      error: () => {
+        this.router.navigate(['/auth'], {queryParams: {mode: 'login', message: 'checkout'}})
+      }
+    })
+  }
 
 }
+

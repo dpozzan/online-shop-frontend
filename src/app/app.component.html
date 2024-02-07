@@ -23,14 +23,19 @@
       <a class="navbar-brand" href="#">OnlineShop</a>
       <div class="d-flex align-items-center gap-3 justify-content-between width-100">
         <div class="dropdown">
-          <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-person-dash"></i>
+          <button class="btn dropdown-toggle" [ngClass]="{'btn-success': isLoggedIn, 'btn-danger': !isLoggedIn}" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i *ngIf="!isLoggedIn" class="bi bi-person-dash"></i>
+            <i *ngIf="isLoggedIn" class="bi bi-person-check"></i>
           </button>
-          <ul class="dropdown-menu">
+          <ul *ngIf="!isLoggedIn; else logout" class="dropdown-menu">
             <li><a class="dropdown-item" [routerLink]="['auth']" [queryParams]="{'mode': 'login'}">Login</a></li>
             <li><a class="dropdown-item" [routerLink]="['auth']" [queryParams]="{'mode': 'signup'}">Sign up</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
+          <ng-template #logout>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" (click)="logoutUser()">Logout</a></li>
+            </ul>
+          </ng-template>
         </div>
         <a routerLink="/basket"><i class="bi bi-cart-check-fill"><span class="cart-item">{{ cartQuantity }}</span></i></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
