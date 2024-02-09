@@ -1,57 +1,56 @@
-import { Component, DoCheck, OnInit } from '@angular/core';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../product/product.model';
 import { environment } from 'src/environments/environment';
 import { ShoppingCartsService } from '../services/shopping-carts.service';
 import { OrdersService } from '../services/orders.service';
-import { take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { add, remove } from './shopping-cart.actions';
+import { selectShoppingCart, selectShoppingCartPrice } from './shopping-cart.selectors';
 
 @Component({
   selector: 'app-shopping-cart',
   templateUrl: './shopping-cart.component.html',
   styleUrls: ['./shopping-cart.component.scss']
 })
-export class ShoppingCartComponent implements OnInit, DoCheck { // Fixed class implementation by changing OnDoCheck to DoCheck
+export class ShoppingCartComponent implements OnInit, DoCheck, OnDestroy { // Fixed class implementation by changing OnDoCheck to DoCheck
   basket: Product[] = [];
+  basketSubscr: Subscription;
+  totalPriceSubscr: Subscription;
   public totalPrice: number = 0;
   public staticPath = environment.staticPath;
   constructor(
     private route: ActivatedRoute, 
     private shoppingCartsService: ShoppingCartsService, 
     private ordersService: OrdersService, 
-    private router: Router
+    private router: Router,
+    private store: Store
   ) {}
 
   ngOnInit() {
     this.route.data.subscribe((data) => {
-      this.basket = data['basket'];
-      for (const basketItem of this.basket) {
-        this.totalPrice += +(basketItem.price * basketItem.quantity).toFixed(2)
-      }
+      this.basket = data['basketInfo'].basket;
+      this.totalPrice = data['basketInfo'].price
     })
 
   }
 
   ngDoCheck() {
-    this.shoppingCartsService.shoppingCartSubjetc.subscribe((updatedBasket) =>{ 
-      this.totalPrice = 0;
-      for (const basketItem of updatedBasket) {
-        this.totalPrice += +(basketItem.price * basketItem.quantity)
-      }
-      this.totalPrice = parseFloat(this.totalPrice.toFixed(2))
-    })
+   this.basketSubscr = this.store.select(selectShoppingCart).subscribe(basket => this.basket = basket)
+   this.totalPriceSubscr = this.store.select(selectShoppingCartPrice).subscribe(totalPrice => this.totalPrice = totalPrice)
   }
 
   addUnits(item: Product) {
     const updatedProduct = { ...item };
     updatedProduct.quantity++;
-    this.shoppingCartsService.updateTemporaryItem(updatedProduct);
+    this.store.dispatch(add({item: updatedProduct}))
   }
 
   removeUnits(item: Product) {
     const updatedProduct = { ...item };
     updatedProduct.quantity--;
-    this.shoppingCartsService.updateTemporaryItem(updatedProduct);
+    this.store.dispatch(remove({item: updatedProduct}))
   }
 
   checkout() {
@@ -64,6 +63,10 @@ export class ShoppingCartComponent implements OnInit, DoCheck { // Fixed class i
         this.router.navigate(['/auth'], {queryParams: {mode: 'login', message: 'checkout'}})
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.basketSubscr.unsubscribe();
   }
 
 }

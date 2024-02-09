@@ -42,7 +42,7 @@
           </div>
         
         </ng-template>
-        <a routerLink="/basket"><i class="bi bi-cart-check-fill"><span class="cart-item">{{ cartQuantity }}</span></i></a>
+        <a routerLink="/basket"><i class="bi bi-cart-check-fill"><span class="cart-item">{{ cartQuantity$ | async }}</span></i></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>

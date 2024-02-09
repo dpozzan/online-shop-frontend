@@ -12,6 +12,11 @@ import { ProductModule } from './product/product.module';
 import { ShoppingCartModule } from './shopping-cart/shopping-cart.module';
 import { OrderModule } from './orders/order.module';
 import { AuthModule } from './auth/auth.module';
+import { StoreModule } from '@ngrx/store';
+import { shoppingCartReducer } from './shopping-cart/shopping-cart.reducer';
+import { productReducer } from './product/product.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { ProductEffects } from './product/product.effects';
 
 
 
@@ -30,6 +35,8 @@ import { AuthModule } from './auth/auth.module';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    StoreModule.forRoot({ shoppingCart: shoppingCartReducer, catalogue: productReducer }, {}),
+    EffectsModule.forRoot([ProductEffects]),
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

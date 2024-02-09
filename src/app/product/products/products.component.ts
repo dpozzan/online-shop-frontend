@@ -3,6 +3,11 @@ import { Product } from '../product.model';
 import { ProductsService } from 'src/app/services/products.service';
 import { environment } from 'src/environments/environment';
 import { ShoppingCartsService } from 'src/app/services/shopping-carts.service';
+import { Store } from '@ngrx/store';
+import { selectShoppingCart } from 'src/app/shopping-cart/shopping-cart.selectors';
+import { add } from 'src/app/shopping-cart/shopping-cart.actions';
+import { Observable } from 'rxjs';
+import { selectProducts } from '../product.selectors';
 
 @Component({
   selector: 'app-products',
@@ -10,42 +15,34 @@ import { ShoppingCartsService } from 'src/app/services/shopping-carts.service';
   styleUrls: ['./products.component.scss']
 })
 export class ProductsComponent implements OnInit{
-  products: Product[] = []
-  product!: Product
+  public tempQuantities: { [productId: number]: number } = {};
+  products$: Observable<Product[]>
   public staticPath = environment.staticPath;
-  public quantity: number = 1;
 
-  constructor(private productsService: ProductsService, private shoppingCartsService: ShoppingCartsService) {}
+  constructor(private store: Store) {}
 
   ngOnInit() {
-
-    this.productsService.getProducts().subscribe((products: Product[]) => {
-      this.products = products
-    })
-
+    this.products$ = this.store.select(selectProducts)
   }
 
   decreaseQuantity(product: Product) {
-    if(product.quantity && product.quantity > 1){
-      product.quantity--
-      this.quantity--
+    const currentQuantity = this.tempQuantities[product.id] || product.quantity;
+    if (currentQuantity > 1) {
+      this.tempQuantities[product.id] = currentQuantity - 1;
     }
   }
 
   increaseQuantity(product: Product) {
-    if(product.quantity && product.quantity < 99){
-      product.quantity++
-      this.quantity++
+    const currentQuantity = this.tempQuantities[product.id] || product.quantity;
+    if (currentQuantity < 99) {
+      this.tempQuantities[product.id] = currentQuantity + 1;
     }
-    
   }
   
   async addToCart(product: Product) {
-    const productToItem = {...product, quantity: this.quantity}
-    await this.shoppingCartsService.saveTemporaryItem(productToItem);  
-    product.quantity = 1;
-    this.quantity = 1;
+    const currentQuantity = this.tempQuantities[product.id] || product.quantity;
+    const productToItem = {...product, quantity: currentQuantity}
+    this.store.dispatch(add({item: productToItem}))
+    this.tempQuantities[product.id] = 1;
   }
-
-
 }

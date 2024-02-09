@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row my-5">
-    <div class="col-xl-3 col-lg-4 col-sm-6 my-3" *ngFor="let product of products">
+    <div class="col-xl-3 col-lg-4 col-sm-6 my-3" *ngFor="let product of products$ | async">
       <div class="card">
         <a [routerLink]="['/products', product.id]">
           <img class="card-img-top"  [src]="staticPath + product.image_urls[0]" [alt]="product.name">
@@ -15,7 +15,8 @@
             </a>
             <div class="input-group input-group-sm my-1">
               <button class="btn btn-outline-warning" (click)="decreaseQuantity(product)">-</button>
-              <input type="number" class="form-control" min="1" max="99" [(ngModel)]="product.quantity">
+              <input type="number" class="form-control" min="1" max="99" 
+                [value]="tempQuantities[product.id] || product.quantity" >
               <button class="btn btn-outline-warning" (click)="increaseQuantity(product)">+</button>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { ShoppingCartComponent } from "./shopping-cart.component";
 import { BasketResolver } from "../resolvers/basket-resolver.service";
 
 const routes: Routes = [
-    { path: 'basket', component: ShoppingCartComponent, resolve: { basket: BasketResolver } },
+    { path: 'basket', component: ShoppingCartComponent, resolve: { basketInfo: BasketResolver } },
 ]
 
 @NgModule({
