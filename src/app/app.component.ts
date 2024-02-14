@@ -7,6 +7,16 @@ import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectShoppingCartLength } from './shopping-cart/shopping-cart.selectors';
 import { loadProducts } from './product/product.actions';
+import { callAutoLogin, callLogout } from './auth/auth.actions';
+import { selectAuth } from './auth/auth.selectors';
+import { ProductState } from './product/product.reducer';
+import { AuthState } from './auth/auth.reducer';
+
+export type AppStoreState = {
+  shoppingCart: Product[],
+  catalogue: ProductState,
+  auth: AuthState
+}
 
 @Component({
   selector: 'app-root',
@@ -20,31 +30,36 @@ export class AppComponent implements OnInit, OnDestroy{
   cartQuantity$: Observable<number>;
   isLoggedIn: boolean = false;
   
-  constructor(private shoppingCartsService: ShoppingCartsService, private authService: AuthService, private store: Store) {}
+  constructor(private authService: AuthService, private store: Store<AppStoreState>) {}
   
 
   ngOnInit(): void {
 
     this.store.dispatch(loadProducts());
-    // this.shoppingCart = this.shoppingCartsService.fetchShoppingCart();
-
-    // this.shoppingCartsService.shoppingCartSubjetc.subscribe((cart: Product[]) => {
-    //   this.shoppingCart = cart;
-    //   this.cartQuantity = this.shoppingCart.reduce((total, cartItem) => total + cartItem.quantity, 0)
-    // });
+  
     this.cartQuantity$ = this.store.select(selectShoppingCartLength)
 
-    this.authSubscr = this.authService.isLoggedIn.subscribe(isLoggedIn => {this.isLoggedIn = isLoggedIn;});
+    this.authSubscr = this.store.select(selectAuth).subscribe({
+      next:(auth) => {
+        this.isLoggedIn = auth.isLoggedIn;
+      },
+      error: (error) => {
+        throw new Error(error)
+      }
+    })
 
-    this.authService.autoLogin()
+    this.store.dispatch(callAutoLogin())
+
   }
 
   logoutUser() {
-    this.authService.logout();
+    // this.authService.logout();
+    this.store.dispatch(callLogout())
   }
 
   ngOnDestroy(): void {
     this.authSubscr.unsubscribe();
+    
   }
   
 }

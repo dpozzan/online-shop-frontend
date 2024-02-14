@@ -1,1 +1,9 @@
-<p>order-detail works!</p>
+<h1>Order:</h1>
+
+<div *ngIf="order">
+    <p>{{ order.id }}</p>
+    <p>{{ order.customer_id }}</p>
+    <p>{{ order.total_price }}</p>
+</div>
+
+<p *ngIf="error">{{ error }}</p>

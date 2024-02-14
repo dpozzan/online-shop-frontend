@@ -1,7 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { Product } from "../product/product.model";
 import { add, remove } from "./shopping-cart.actions";
-import { CartItem } from "./cart-item.model";
 
 const initialState: Product[] = [] 
 

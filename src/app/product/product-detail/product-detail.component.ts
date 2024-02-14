@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./product-detail.component.scss']
 })
 export class ProductDetailComponent implements OnInit {
-  public product: Product = new Product(0, '', '', 0, [], 1)
+  public product: Product | null = null;
   public staticPath = environment.staticPath;
 
 

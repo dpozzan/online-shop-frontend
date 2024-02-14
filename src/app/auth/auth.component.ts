@@ -1,7 +1,10 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { AuthService } from 'src/app/services/auth.service';
+import { callLogin, callRegister } from './auth.actions';
+import { selectAuth } from './auth.selectors';
 
 
 @Component({
@@ -14,33 +17,19 @@ export class AuthComponent implements OnInit, OnDestroy {
   message: string | undefined = null;
   isLoginMode: boolean = true;
   messageTimeout: any;
-  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router, 
+    private authService: AuthService,
+    private store: Store
+  ) {}
 
 
   onSubmit(form: NgForm) {
     if(this.isLoginMode){
-      this.authService.login(form.value).subscribe({
-        next: () => {
-          this.error = null;
-          this.router.navigate(['/products']);
-        }, 
-        error: (error) => {
-          this.error = error;
-        }
-      })
+      this.store.dispatch(callLogin(form.value))
     } else {
-      this.authService.register(form.value).subscribe({
-        next: (response) => {
-          this.message = response.message;
-          this.error = null;
-          this.messageTimeout = setTimeout(() => {
-            this.message = null;
-          }, 1500)
-        },
-        error: (error) => {
-          this.error = error;
-        }
-      })
+      this.store.dispatch(callRegister(form.value))
     }
 
   }
@@ -52,6 +41,20 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.message = 'You must be logged in to proceed with the checkout.';
       }
     })
+    this.store.select(selectAuth).subscribe({
+      next: (res) => {
+        this.message = res.message;
+        this.error = res.error;
+        this.messageTimeout = setTimeout(() => {
+          this.message = null;
+        }, 1500)
+
+      },
+      error: (err) => {
+        this.error = err;
+      }
+    })
+    
   }
 
   toggleLoginMode(): void {

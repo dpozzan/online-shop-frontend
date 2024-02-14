@@ -1,5 +1,4 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { Product } from "./product.model";
 import { ProductState } from "./product.reducer";
 
 

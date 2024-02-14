@@ -20,42 +20,7 @@ export class AuthService implements OnDestroy{
   }
 
   login(body: {email: string, password: string}): Observable<any> {
-    return this.http.post<{exp: number, token: string}>("http://localhost:8080/login", body).pipe(
-      tap(response => {
-        localStorage.setItem('auth', JSON.stringify(response));
-        const now = new Date().getTime();
-        const expirationTime = response.exp * 1000;
-        const timeSpan = expirationTime - now;
-        this.authTimeout = setTimeout(() => {
-          this.logout();
-        }, timeSpan)
-        this.isLoggedIn.next(true);
-      }),
-      catchError(errorResp => {
-        throw new Error(errorResp.error.message);
-      })
-    )
-  }
-
-  autoLogin() {
-    const authSetting = JSON.parse(localStorage.getItem('auth'));
-    if (authSetting && authSetting.token) {
-      const now = new Date().getTime();
-      const expirationTime = authSetting.exp * 1000;
-      const timeSpan = expirationTime - now;
-      
-      if(expirationTime > now) {
-        this.authTimeout = setTimeout(() => {
-          this.logout()
-        }, timeSpan);
-        this.isLoggedIn.next(true);
-      }
-    }
-  }
-
-  logout() {
-    localStorage.removeItem('auth');
-    this.isLoggedIn.next(false);
+    return this.http.post<{exp: number, token: string}>("http://localhost:8080/login", body)
   }
 
   checkLoginStatus() {

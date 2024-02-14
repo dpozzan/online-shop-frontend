@@ -4,7 +4,7 @@
             <!-- Carousel -->
             <div id="carouselExampleFade" class="carousel slide carousel-dark">
                 <div class="carousel-inner">
-                  <div class="carousel-item" [ngClass]="{'active': i === 0}" *ngFor="let imageUrl of product.image_urls; let i = index">
+                  <div class="carousel-item" [ngClass]="{'active': i === 0}" *ngFor="let imageUrl of product?.image_urls; let i = index">
                     <img [src]="staticPath + imageUrl" class="d-block w-100 card-img-top" [alt]="imageUrl">
                   </div>
                 </div>
@@ -20,8 +20,8 @@
 
             <!-- Carousel -->
             <div class="card-body">
-              <h5 class="card-title">{{ product.name }}</h5>
-              <p class="card-text">{{ product.description }}</p>
+              <h5 class="card-title">{{ product?.name }}</h5>
+              <p class="card-text">{{ product?.description }}</p>
               <a routerLink="/products" class="card-text"><small class="text-body-secondary">Products</small></a>
             </div>
         </div>

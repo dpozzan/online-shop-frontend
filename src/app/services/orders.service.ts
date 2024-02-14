@@ -10,6 +10,10 @@ export class OrdersService {
 
   constructor(private http: HttpClient) { }
 
+  getOrder(id: string): Observable<any> {
+    return this.http.get<{id: number, total_price: number, customer_id: number}>('http://localhost:8080/orders/' + id)
+  }
+
   createOrder(basket: Product[]): Observable<any> {
     return this.http.post<any>('http://localhost:8080/orders', {}).pipe(
       catchError(errorResponse => {throw new Error(errorResponse.error.message)}),
